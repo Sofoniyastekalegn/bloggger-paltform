@@ -50,6 +50,8 @@ export async function fetchArticles(params?: {
   page?: number;
   category?: number;
   search?: string;
+  order?: "asc" | "desc";
+  orderby?: string;
 }) {
   const query = new URLSearchParams({
     _embed: "1",
@@ -58,6 +60,8 @@ export async function fetchArticles(params?: {
   });
   if (params?.category) query.set("categories", String(params.category));
   if (params?.search) query.set("search", params.search);
+  if (params?.order) query.set("order", params.order);
+  if (params?.orderby) query.set("orderby", params.orderby);
   return wpFetch<WPArticle[]>(`${BASE}/${RESOURCE}?${query.toString()}`);
 }
 

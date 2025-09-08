@@ -1,5 +1,5 @@
 import React from "react";
-import Link from "next/link";
+import ItemList from "@/components/ItemList";
 
 // /src/app/category/[slug]/page.tsx
 
@@ -54,27 +54,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             {posts.length === 0 ? (
                 <p>No posts found in this category.</p>
             ) : (
-                <ul className="space-y-6">
-                    {posts.map((post: WPListPost) => (
-                        <li key={post.id} className="border-b pb-4">
-                            <Link href={`/article/${post.slug}`} className="text-xl font-semibold hover:underline">
-                                {post.title.rendered}
-                            </Link>
-                            {post._embedded?.["wp:featuredmedia"]?.[0]?.source_url && (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img
-                                    src={post._embedded["wp:featuredmedia"][0].source_url as string}
-                                    alt={post.title.rendered}
-                                    className="my-2 w-full max-w-md"
-                                />
-                            )}
-                            <div
-                                className="text-gray-700"
-                                dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }}
-                            />
-                        </li>
-                    ))}
-                </ul>
+                <ItemList initialItems={posts as any} baseLink="/article" categorySlug={category.slug} order="asc" orderby="date" perPage={9} />
             )}
         </div>
     );
