@@ -1,5 +1,6 @@
 import React from "react";
 import ItemList from "@/components/ItemList";
+import type { WPArticle } from "@/lib/wp";
 
 // /src/app/category/[slug]/page.tsx
 
@@ -54,7 +55,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             {posts.length === 0 ? (
                 <p>No posts found in this category.</p>
             ) : (
-                <ItemList initialItems={posts as any} baseLink="/article" categorySlug={category.slug} order="asc" orderby="date" perPage={9} />
+                <ItemList initialItems={posts as unknown as WPArticle[]} baseLink="/article" categorySlug={category.slug} order="asc" orderby="date" perPage={9} />
             )}
         </div>
     );

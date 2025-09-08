@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,15 +30,18 @@ export default function RootLayout({
       >
         <header className="sticky top-0 z-20 border-b bg-background/80 backdrop-blur">
           <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
-            <a href="/" className="font-semibold">WP Blog</a>
-            <nav className="text-sm">
-              <a href="/" className="hover:underline">Home</a>
+            <Link href="/" className="text-lg font-semibold tracking-tight">WP Blog</Link>
+            <nav className="flex items-center gap-6 text-sm">
+              <Link href="/" className="transition-colors hover:text-blue-600">Home</Link>
             </nav>
           </div>
         </header>
         <main>{children}</main>
         <footer className="mt-16 border-t">
-          <div className="mx-auto max-w-6xl px-4 py-6 text-sm text-gray-500">© {new Date().getFullYear()} WP Blog</div>
+          <div className="mx-auto max-w-6xl px-4 py-6 text-sm text-gray-500 flex items-center justify-between">
+            <span>© {new Date().getFullYear()} WP Blog</span>
+            <Link href="/" className="hover:underline">Back to top</Link>
+          </div>
         </footer>
       </body>
     </html>

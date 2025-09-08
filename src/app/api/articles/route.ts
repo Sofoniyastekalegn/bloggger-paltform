@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { fetchArticles, fetchCategoryBySlug } from "@/src/lib/wp";
+import { fetchArticles, fetchCategoryBySlug } from "@/lib/wp";
 
 export const dynamic = "force-dynamic";
 
