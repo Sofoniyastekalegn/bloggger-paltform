@@ -19,6 +19,8 @@ export default async function Home() {
           alt="Blog hero"
           width={1600}
           height={600}
+          unoptimized
+          sizes="(max-width: 1024px) 100vw, 1024px"
           className="h-52 w-full transform object-cover transition-transform duration-700 ease-out group-hover:scale-105 group-hover:rotate-1 sm:h-72 md:h-80 lg:h-96"
           priority
         />
