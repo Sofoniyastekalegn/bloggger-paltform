@@ -1,15 +1,17 @@
 import React from "react";
-import Link from "next/link";
+import ItemList from "@/components/ItemList";
+import type { WPArticle } from "@/lib/wp";
 
 // /src/app/category/[slug]/page.tsx
 
 
 const WP_API_URL = process.env.NEXT_PUBLIC_WP_API_URL || "https://wordpress-1518583-5839077.cloudwaysapps.com/wp-json";
-const POSTS_ENDPOINT = `${WP_API_URL}/wp/v2/posts`;
+const RESOURCE = (process.env.NEXT_PUBLIC_WP_RESOURCE || "article").replace(/^\/+|\/+$/g, "");
+const POSTS_ENDPOINT = `${WP_API_URL}/wp/v2/${RESOURCE}`;
 const CATEGORIES_ENDPOINT = `${WP_API_URL}/wp/v2/categories`;
 
 async function getCategoryBySlug(slug: string) {
-    const res = await fetch(`${CATEGORIES_ENDPOINT}?slug=${slug}`, { next: { revalidate: 60 } });
+    const res = await fetch(`${CATEGORIES_ENDPOINT}?slug=${encodeURIComponent(slug)}`, { next: { revalidate: 60 } });
     if (!res.ok) return null;
     const categories = await res.json();
     return categories[0] || null;
@@ -17,14 +19,28 @@ async function getCategoryBySlug(slug: string) {
 
 async function getPostsByCategory(categoryId: number) {
     const res = await fetch(`${POSTS_ENDPOINT}?categories=${categoryId}&_embed`, { next: { revalidate: 60 } });
-    if (!res.ok) return [];
+    if (!res.ok) return [] as WPListPost[];
     return res.json();
 }
 
 type Params = { slug: string };
 
-export default async function CategoryPage({ params }: { params: Params }) {
-    const { slug } = params;
+type CategoryPageProps = { params: Promise<Params> };
+
+// Minimal shape for list rendering from WP API
+type WPListPost = {
+    id: number;
+    slug: string;
+    title: { rendered: string };
+    excerpt: { rendered: string };
+    _embedded?: {
+        [key: string]: unknown;
+        "wp:featuredmedia"?: Array<{ source_url?: string }>;
+    };
+};
+
+export default async function CategoryPage({ params }: CategoryPageProps) {
+    const { slug } = await params;
     const category = await getCategoryBySlug(slug);
 
     if (!category) {
@@ -39,26 +55,7 @@ export default async function CategoryPage({ params }: { params: Params }) {
             {posts.length === 0 ? (
                 <p>No posts found in this category.</p>
             ) : (
-                <ul className="space-y-6">
-                    {posts.map((post: any) => (
-                        <li key={post.id} className="border-b pb-4">
-                            <Link href={`/post/${post.slug}`}>
-                                <a className="text-xl font-semibold hover:underline">{post.title.rendered}</a>
-                            </Link>
-                            {post._embedded?.["wp:featuredmedia"]?.[0]?.source_url && (
-                                <img
-                                    src={post._embedded["wp:featuredmedia"][0].source_url}
-                                    alt={post.title.rendered}
-                                    className="my-2 w-full max-w-md"
-                                />
-                            )}
-                            <div
-                                className="text-gray-700"
-                                dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }}
-                            />
-                        </li>
-                    ))}
-                </ul>
+                <ItemList initialItems={posts as unknown as WPArticle[]} baseLink="/article" categorySlug={category.slug} order="asc" orderby="date" perPage={9} />
             )}
         </div>
     );

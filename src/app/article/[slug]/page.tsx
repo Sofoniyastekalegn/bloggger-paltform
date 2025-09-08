@@ -28,13 +28,13 @@ export default async function ArticlePage({ params }: Props) {
         {author ? ` • ${author.name}` : null}
       </p>
       {img.url ? (
-        <div className="mt-6">
+        <div className="mt-6 overflow-hidden rounded-lg">
           <Image
             src={img.url}
             alt={img.alt}
             width={1200}
             height={800}
-            className="h-auto w-full rounded"
+            className="h-auto w-full transform rounded-lg object-cover transition-transform duration-700 ease-out hover:scale-105 hover:rotate-1"
           />
         </div>
       ) : null}
